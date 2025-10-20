@@ -1,3 +1,6 @@
+package tp2;
+
+
 public abstract class semaphore {
 
     protected int valeur=0;

@@ -1,7 +1,8 @@
 package tp3;
 
-public class Producer extends Thread{
+public class Producer extends Thread {
     private BAL bal;
+    private static int compteur = 0; // pour nommer les lettres produites
 
     public Producer(BAL bal) {
         this.bal = bal;
@@ -9,11 +10,20 @@ public class Producer extends Thread{
 
     @Override
     public void run() {
-        for (int i = 0; i < 10; i++) {
-            bal.deposer("Lettre n" + i);
-            try {
+        try {
+            while (true) {
+                // toutes les secondes, un producteur dépose une lettre
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {}
+
+                String lettre = "Lettre-" + (++compteur);
+                bal.deposer(lettre); // méthode bloquante (put)
+
+                System.out.println("[" + Thread.currentThread().getName() + "] a déposé " + lettre);
+            }
+        } catch (InterruptedException e) {
+            System.out.println("[" + Thread.currentThread().getName() + "] je m'arrête.");
         }
     }
 }
+
+

@@ -3,6 +3,7 @@ package tp3;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /*
 On crée une classe BAL abstraction de la boite au lettre
@@ -15,46 +16,24 @@ Cette classe à au moins 2 méthodes
 BAL EST UN MONITEUR (mutex)
  */
 public class BAL {
-    private String buffer;
-    private Boolean available;
-    private BlockingQueue<String> queue = new ArrayBlockingQueue<>(20);
+    private BlockingQueue<String> queue;
 
-    public BAL (){
-        this.buffer = null;
-        this.available = false;
+    public BAL() {
+        queue = new ArrayBlockingQueue<>(20);
     }
 
-    synchronized boolean deposer (String lettre) {
-        while (available) {
-            System.out.println("Producteur attend...");
-            try {
-                wait();
-            }
-            catch (InterruptedException e) {};
-        }
-
-        buffer = lettre;
-        available = true;
+    public void deposer(String lettre) throws InterruptedException {
         System.out.println("Producteur dépose : " + lettre);
-        notify();
-        return queue.offer(lettre);
+        queue.put(lettre); // bloquant si plein
     }
 
-    synchronized String retirer () {
-
-        while (!available) {
-            System.out.println("Consommeteur attend...");
-            try {
-                wait();
-            }
-            catch (InterruptedException e) {};
-        }
-        String lettre = buffer;
-        available = false;
+    public String retirer() throws InterruptedException {
+        String lettre = queue.take(); // bloquant si vide
         System.out.println("Consommateur retire : " + lettre);
+        return lettre;
+    }
 
-        notify();
-
-        return queue.poll();
+    public int getTaille() {
+        return queue.size();
     }
 }

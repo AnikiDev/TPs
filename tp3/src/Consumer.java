@@ -1,18 +1,24 @@
 package tp3;
 
-public class Consumer extends Thread{
+public class Consumer extends Thread {
     private BAL bal;
 
     public Consumer(BAL bal) {
         this.bal = bal;
     }
 
+    @Override
     public void run() {
-        for (int i = 0; i < 10; i++) {
-            bal.retirer();
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {}
+        try {
+            while (true) {
+                // toutes les secondes, le consommateur retire une lettre
+                Thread.sleep(1000);
+
+                String lettre = bal.retirer(); // méthode bloquante (take)
+                System.out.println("[" + Thread.currentThread().getName() + "] a retiré " + lettre);
+            }
+        } catch (InterruptedException e) {
+            System.out.println("[" + Thread.currentThread().getName() + "] je m'arrête.");
         }
     }
 }

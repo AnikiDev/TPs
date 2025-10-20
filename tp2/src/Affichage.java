@@ -1,3 +1,4 @@
+package tp2;
 /**
  * 
  */
@@ -18,7 +19,7 @@ public class Affichage extends Thread{
         semaphoreBinaire.syncWait();
         //la boucle for est la section critique
         for (int i=0; i<texte.length(); i++){
-            //sout est la ressource critique
+            //out est la ressource critique
             System.out.print(texte.charAt(i));
             try {sleep(100);} catch(InterruptedException e){};
         }
