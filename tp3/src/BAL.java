@@ -1,5 +1,9 @@
 package tp3;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /*
 On crée une classe BAL abstraction de la boite au lettre
 Cette classe a 2 champs :
@@ -13,13 +17,14 @@ BAL EST UN MONITEUR (mutex)
 public class BAL {
     private String buffer;
     private Boolean available;
+    private BlockingQueue<String> queue = new ArrayBlockingQueue<>(20);
 
     public BAL (){
         this.buffer = null;
         this.available = false;
     }
 
-    synchronized void deposer (String lettre) {
+    synchronized boolean deposer (String lettre) {
         while (available) {
             System.out.println("Producteur attend...");
             try {
@@ -32,6 +37,7 @@ public class BAL {
         available = true;
         System.out.println("Producteur dépose : " + lettre);
         notify();
+        return queue.offer(lettre);
     }
 
     synchronized String retirer () {
@@ -49,6 +55,6 @@ public class BAL {
 
         notify();
 
-        return lettre;
+        return queue.poll();
     }
 }
